@@ -16,20 +16,18 @@ const crate = require('node-crate');
 const logger = require('koa-logger');
 const rethinkdbdash = require('rethinkdbdash');
 const moment = require('moment');
-var cors = require('koa-cors');
-const rethinkdb = require('rethinkdb');
-const serve = require('koa-static');
-const max_limit = 50000;
+const max_limit = 100;
+const cors = require('koa-cors');
 
 // Initialize configuration variables
 nconf
     .argv({ parseValues: true })
     .env({ parseValues: true, lowerCase: true })
     .defaults({
-        rethink_database: 'logs',
+        rethink_database: 'hackathon',
         rethink_port: 28015,
         crate_port: 4200,
-        app_port: 8081
+        app_port: 8080
     })
     .required([
         'rethink_database',
@@ -46,44 +44,43 @@ const r = rethinkdbdash({
     servers: [
         { host: nconf.get('rethink_host'), port: nconf.get('rethink_port') }
     ],
-    pool: false,
     ssl: { rejectUnauthorized: false }
 });
 
 crate.connect(nconf.get('crate_host'), nconf.get('crate_port'));
 
 // Start web server using Koa
-//const app = new Koa();
 const app = new Koa();
-var server = require('http').Server(app.callback());
-var io = require('socket.io')(server);
+const server = require('http').Server(app.callback());
+const io = require('socket.io')(server,{path:'/socket.io'});
 
-const WebSocket = require('ws');
 const router = new Router();
 
 app.use(logger());
-app.use(cors({origin:'*'}));
+
 // HTTP GET /logs/rethinkdb?min=etc&max=etc to get logs between dates
 router.get('/logs/rethinkdb', async ctx => {
-    const { min, max,limit } = ctx.query;
+    const { min, max } = ctx.query;
     if (!min || !max)
         ctx.throw(400, 'Must specify min and max in query string.');
 
     const minDate = moment.utc(min, moment.ISO_8601);
     const maxDate = moment.utc(max, moment.ISO_8601);
-
+console.log(minDate);
+console.log(maxDate);
     if (!minDate.isValid() || !maxDate.isValid())
         ctx.throw(400, 'Min and max must be ISO 8601 date strings');
 
+    let {limit,skip} = ctx.query;
+    console.log(limit);
     const entries = await r
         .table('logs')
         .between(minDate.toDate(), maxDate.toDate(), { index: 'time' })
-        .limit(limit)
+        .slice(parseInt(skip), parseInt(limit))
         .run();
 
     ctx.status = 200;
-    ctx.body = [{test:"test"}];
-    
+    ctx.body = entries;
 });
 
 // HTTP GET /logs/cratedb?min=etc&max=etc to get logs between dates
@@ -109,53 +106,49 @@ router.get('/logs/cratedb', async ctx => {
 
 router.get('/logs/rethinkdb/pipe',async ctx => {
     const { min, max,limit } = ctx.query;
-    const entries = await r
-        .table('logs')
-        .limit(1)
-        .run();
+    ctx.req.pipe(r.table('logs').toStream()
+  .on('error', console.log)
+  .pipe(ctx.body)
+  .on('error', console.log)
+  .on('end', function() {
+    r.getPool().drain();
+  })
+);
 
-   entries.each((err,data)=>{
-       console.log(err,data);
-   });
-
-    ctx.status = 200;
-    ctx.body = entries;
+   // ctx.status = 200;
+   // ctx.body = entries;
 
 })
-
-var connection = null;
 
 // Use router middleware
 app.use(router.routes());
 app.use(router.allowedMethods());
+
+app.use(cors({origin:"*"}));
 
 // Start server on app port.
 const port = nconf.get('app_port');
 server.listen(port, () => {
     console.log(`Server started on port ${port}.`);
 });
+//io.set('origins', 'http://localhost:4200');
+//io.set('transports',['websocket', 'xhr-polling']);
 
-io.set('transports', [ 'websocket','xhr-polling']);
-io.on('connection', function(socket) {
+io
+.on('connection', function(socket) {
     console.log('new connection');
 
-    rethinkdb.connect({
-        db: nconf.get('rethink_database'),
-        host: nconf.get('rethink_host'), port: nconf.get('rethink_port'),
-        pool: false,
-        ssl: { rejectUnauthorized: false }
-    },function(err,conn) {
-        console.log(err);
-        console.log(conn);
-         r
-        .table('logs')
-        .changes()
-        .run(conn,(err,logs) => {
-            console.log(logs);
-            socket.emit('log', {
-                log: logs
-              });
-    
-        });
+//   const { min, max,limit } = ctx.query;
+    const entries =  r
+    .table('logs')
+    .changes()
+    .run();
+
+    console.log(entries);
+    entries.each(logs=> {
+        socket.emit('log',logs);	
     })
-});
+
+
+ });
+
