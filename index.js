@@ -66,13 +66,10 @@ router.get('/logs/rethinkdb', async ctx => {
 
     const minDate = moment.utc(min, moment.ISO_8601);
     const maxDate = moment.utc(max, moment.ISO_8601);
-console.log(minDate);
-console.log(maxDate);
     if (!minDate.isValid() || !maxDate.isValid())
         ctx.throw(400, 'Min and max must be ISO 8601 date strings');
 
     let {limit,skip} = ctx.query;
-    console.log(limit);
     const entries = await r
         .table('logs')
         .between(minDate.toDate(), maxDate.toDate(), { index: 'time' })
@@ -95,9 +92,11 @@ router.get('/logs/cratedb', async ctx => {
     if (!minDate.isValid() || !maxDate.isValid())
         ctx.throw(400, 'Min and max must be ISO 8601 date strings');
 
+    let {limit,skip} = ctx.query;
+
     const entries = await crate.execute(
-        'SELECT * FROM logs WHERE time BETWEEN ? AND ? LIMIT ?',
-        [minDate.toDate(), maxDate.toDate(), max_limit]
+        'SELECT * FROM logs WHERE time BETWEEN ? AND ? LIMIT ? OFFSET ?',
+        [minDate.toDate(), maxDate.toDate(), parseInt(limit), parseInt(skip)]
     );
 
     ctx.status = 200;
