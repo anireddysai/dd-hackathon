@@ -19,7 +19,7 @@ import { LogsComponent } from './components/logs/logs.component';
 
 import { RouterModule, Routes } from '@angular/router';
 
-import { RestService } from './injectables/rest.service'
+import { RestService } from './injectables/rest/rest.service'
 import { LogsService } from './injectables/logs/logs.service';
 import { WebsocketService } from './injectables/websocket/websocket.service';
 import { FilterPipe } from './pipes/filter/filter.pipe';

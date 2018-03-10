@@ -11,7 +11,8 @@
     </section>
   </mat-drawer>
   <div class="dd-logs-sidenav-content" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="500" (scrolled)="getMoreLogs()">
-      <mat-toolbar color="primary">
+
+    <mat-toolbar color="primary">
           <mat-toolbar-row fxLayout="row" fxLayoutAlign="end center" >
                     <mat-form-field class="example-full-width">
                       <input matInput placeholder="Min Date" [(ngModel)]="mindate" [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1" >
@@ -25,12 +26,11 @@
                     <md-button class="md-raised md-accent dd-button">Go</md-button>
             </mat-toolbar-row>
       </mat-toolbar>
-      
-      <mat-tab-group selectedTabChange="tagChanged()">
-          <mat-tab label="RethinkDB">
-              <mat-form-field class="dd-search-field">
-                  <input matInput placeholder="Search RethinkDB Logs"  [(ngModel)]="filter.search">
-                </mat-form-field>
+      <mat-form-field class="dd-search-field">
+        <input matInput placeholder="Search Logs"  [(ngModel)]="filter.search">
+      </mat-form-field>
+      <mat-tab-group color="primary" (selectedTabChange)="onTabChanged($event)">
+          <mat-tab label="RethinkDB Logs">
               <mat-list>
                   <mat-list-item *ngFor="let log of logs.rethinkdb | filter:filter">
                     <h4 mat-line>

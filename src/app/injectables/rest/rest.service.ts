@@ -15,24 +15,18 @@ import 'rxjs/add/operator/map';
  * and all rest calls will be processed though it.
  */
 
+ export interface Methods {}
+
  @Injectable()
 export class RestService {
   
-  /**
-   * Move it to enums or config class
-   */
-  Methods: {
-    GET: "get",
-    POST : "post"
-  }
-
   API_ENDPOINT = "http://ideal-cardinal.hackathon.venom360.com/api/";
  // API_ENDPOINT = "http://localhost:8081/"
 
   config: any = {};
-  constructor(
-   public http : HttpClient
-  ) {
+
+  constructor( public http : HttpClient) {
+
    this.config = {
       rethinkdb: {
         logs: {
@@ -42,15 +36,13 @@ export class RestService {
       },
       cratedb: {
         logs: {
-          url: "logs/cratedb?min={min}&max={max}",
+          url: "logs/cratedb?min=2018-03-10T00:00:00.000Z&max=2018-03-10T09:59:59.999Z&limit={limit}&skip={skip}",
           method: "GET"
         }
       }
   
     }
   }
-
-
 
   get(url: string, params: any):any {
     console.log(params);

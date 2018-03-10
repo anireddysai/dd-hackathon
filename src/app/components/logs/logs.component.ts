@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { RestService } from "../../injectables/rest.service";
+import { RestService } from "../../injectables/rest/rest.service";
 import { LogsService } from "../../injectables/logs/logs.service";
 import * as moment from 'moment';
 import { FormControl, FormBuilder } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-logs',
@@ -11,9 +12,18 @@ import { FormControl, FormBuilder } from '@angular/forms';
 })
 export class LogsComponent implements OnInit {
   
-  skip:number = 0;
-  limit:number = 100;
-  increament = 100;
+  currentActivetab = 0;
+  config:LogParamsConfig = {
+    rethinkdb: {
+      skip :0 ,
+      limit : 100
+    },
+    cratedb : {
+      skip: 0,
+      limit: 100
+    },
+    increment : 100 
+  };
 
   logs:Logs = {
     rethinkdb: [],
@@ -36,7 +46,6 @@ export class LogsComponent implements OnInit {
     private http: RestService,
     private logsService: LogsService
   ) {
-    console.log(this.http);
 
    }
 
@@ -44,8 +53,8 @@ export class LogsComponent implements OnInit {
     let params = {
       min:moment(this.mindate).toISOString(),
       max:moment(this.maxdate).toISOString(),
-      limit: this.limit,
-      skip:this.skip
+      limit: this.config.rethinkdb.limit,
+      skip:this.config.rethinkdb.skip
     };
 
     this.getRethinkDBLogs(params);
@@ -62,24 +71,49 @@ export class LogsComponent implements OnInit {
   }
 
   getMoreLogs() {
+    if(this.currentActivetab == 0) {
+      this.getMoreRethinkLogs()
+    }
+    else {
+      this.getMoreCrateLogs();
+    }
+  }
+
+  getMoreRethinkLogs() {
+
+    this.config.rethinkdb.skip += this.config.increment
+    this.config.rethinkdb.limit += this.config.increment;
+
     let params = {
       min:moment(this.mindate).toISOString(),
       max:moment(this.maxdate).toISOString(),
-      limit: this.limit,
-      skip:this.skip
+      limit: this.config.rethinkdb.limit,
+      skip:this.config.rethinkdb.skip
     };
 
-    this.skip += this.increament
-    this.limit += this.increament;
     this.getRethinkDBLogs(params);
+
   }
 
+  getMoreCrateLogs() {
+
+    this.config.cratedb.skip += this.config.increment
+    this.config.cratedb.limit += this.config.increment;
+
+    let params = {
+      min:moment(this.mindate).toISOString(),
+      max:moment(this.maxdate).toISOString(),
+      limit: this.config.cratedb.limit,
+      skip:this.config.cratedb.skip
+    };
+
+    this.getCrateDBLogs(params);
+  }
 
   getRethinkDBLogs(params) {
 
     this.http.execute(this.http.config.rethinkdb.logs,params,{}).subscribe(
       data => {
-        console.log(data);
         this.logs.rethinkdb  = this.logs.rethinkdb.concat(data);
       },
       error => {
@@ -92,6 +126,7 @@ export class LogsComponent implements OnInit {
     this.http.execute(this.http.config.cratedb.logs,params,{}).subscribe(
       data => {
         this.logs.cratedb  = this.logs.cratedb.concat(data);
+        console.log(this.logs.cratedb);
       },
       error => {
 
@@ -100,14 +135,27 @@ export class LogsComponent implements OnInit {
 
   }
 
-  tagChanged() {
-      console.log("TAB CHANGED");
-  }
+  onTabChanged(event:MatTabChangeEvent) {
+    console.log(event);
+    this.currentActivetab = event.index;
 
+  }
 }
 
 
 export interface Logs {
   rethinkdb : Array<any>;
   cratedb: Array<any>
+}
+
+export interface LogParamsConfig {
+  rethinkdb : {
+    skip : number,
+    limit: number
+  }
+  cratedb: {
+    skip: number,
+    limit: number
+  }
+  increment: number
 }
