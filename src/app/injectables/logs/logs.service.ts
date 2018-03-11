@@ -12,9 +12,9 @@ export class LogsService {
 	private socket: SocketIOClient.Socket;
 
   constructor() {
-    // this.socket = io('http://localhost:8081',{
-		// 	transports: ['websocket', 'xhr-polling']
-		// });
+    this.socket = io('http://localhost:8080',{
+			transports: ['websocket', 'xhr-polling']
+		});
 		
   }
 
@@ -26,11 +26,11 @@ export class LogsService {
 
   // HANDLER
   onNewMessage() {
-    // return Observable.create(observer => {
-    //   this.socket.on('log', msg => {
-    //     observer.next(msg);
-    //   });
-    // });
+    return Observable.create(observer => {
+      this.socket.on('log', msg => {
+        observer.next(msg);
+      });
+    });
   }
 
 }

@@ -6,12 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { InfiniteScrollModule } from 'angular2-infinite-scroll';
 
-import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatListModule} from '@angular/material/list'
-import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatTabsModule} from '@angular/material/tabs';
-import {MatInputModule} from '@angular/material/input';
+import {DDMaterialModule} from './material.module';
 
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { AppComponent } from './components/app/app.component';
@@ -23,12 +18,14 @@ import { RestService } from './injectables/rest/rest.service'
 import { LogsService } from './injectables/logs/logs.service';
 import { WebsocketService } from './injectables/websocket/websocket.service';
 import { FilterPipe } from './pipes/filter/filter.pipe';
+import { LiveComponent } from './components/live/live.component';
 
 const routes: Routes = [
   { path: 'app', component: AppComponent },
-  { path: 'logs',      component: LogsComponent },
+  { path: 'history/logs',component: LogsComponent },
+  { path: 'live/logs',component: LiveComponent },
   { path: '',
-    redirectTo: '/logs',
+    redirectTo: '/live/logs',
     pathMatch: 'full'
   }
 ];
@@ -37,17 +34,13 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     LogsComponent,
-    FilterPipe
+    FilterPipe,
+    LiveComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatListModule,
-    MatTabsModule,
-    MatCheckboxModule,
-    MatInputModule,
+    DDMaterialModule,
     OwlDateTimeModule,
     OwlNativeDateTimeModule,
     RouterModule.forRoot(
@@ -60,7 +53,7 @@ const routes: Routes = [
     InfiniteScrollModule
   ],
   exports:[
-    MatSidenavModule
+    
   ],
   providers: [
     RestService,

@@ -1,19 +1,8 @@
 
-<mat-drawer-container class="dd-logs-container" autosize color="primary">
-  <mat-drawer #drawer class="dd-logs-sidenav" mode="side" opened="true">
-    <section class="dd-title">
-        <span>Hackathon Logs</span>
-    </section>
-    <section class="dd-logs">
-      <h4>Log Level</h4>
-      <mat-checkbox color="primary" [(ngModel)]="filter.info">Access Logs</mat-checkbox>
-      <mat-checkbox color="primary" [(ngModel)]="filter.error">Error Logs</mat-checkbox>
-    </section>
-  </mat-drawer>
   <div class="dd-logs-sidenav-content" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="500" (scrolled)="getMoreLogs()">
 
     <mat-toolbar color="primary">
-          <mat-toolbar-row fxLayout="row" fxLayoutAlign="end center" >
+          <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-evenly center">
                     <mat-form-field class="example-full-width">
                       <input matInput placeholder="Min Date" [(ngModel)]="mindate" [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1" >
                       <owl-date-time #dt1></owl-date-time>
@@ -26,9 +15,19 @@
                     <md-button class="md-raised md-accent dd-button">Go</md-button>
             </mat-toolbar-row>
       </mat-toolbar>
-      <mat-form-field class="dd-search-field">
-        <input matInput placeholder="Search Logs"  [(ngModel)]="filter.search">
-      </mat-form-field>
+      <section fxLayout="row" fxLayoutAlign="space-between center">
+        <div fxFlex="50%">
+            <mat-form-field class="dd-search-field">
+                <input matInput placeholder="Search Logs"  [(ngModel)]="filter.search">
+              </mat-form-field>
+  
+        </div>
+        <div fxFlex="50%" class="dd-filter-check-box-group">
+            <mat-checkbox color="primary" [(ngModel)]="filter.info">Access Logs</mat-checkbox>
+            <mat-checkbox color="primary" [(ngModel)]="filter.error">Error Logs</mat-checkbox> 
+        </div>
+
+      </section>
       <mat-tab-group color="primary" (selectedTabChange)="onTabChanged($event)">
           <mat-tab label="RethinkDB Logs">
               <mat-list>
@@ -72,5 +71,4 @@
           </mat-tab>
     </mat-tab-group>
   </div>
-</mat-drawer-container>
 

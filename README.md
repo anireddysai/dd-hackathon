@@ -1,6 +1,6 @@
 # dd-hackathon
 
-# ** Backed setup locally **
+** Backed setup locally **
 ** run **
 
 $npm install

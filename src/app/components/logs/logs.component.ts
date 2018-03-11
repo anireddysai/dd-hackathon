@@ -57,12 +57,9 @@ export class LogsComponent implements OnInit {
       skip:this.config.rethinkdb.skip
     };
 
-    this.getRethinkDBLogs(params);
-    this.getCrateDBLogs(params);
+   this.getRethinkDBLogs(params);
+   this.getCrateDBLogs(params);
 
-    // this.logsService.onNewMessage().subscribe(res=> {
-    //   console.log(res);
-    // })
 
   }
 
@@ -140,6 +137,7 @@ export class LogsComponent implements OnInit {
     this.currentActivetab = event.index;
 
   }
+
 }
 
 

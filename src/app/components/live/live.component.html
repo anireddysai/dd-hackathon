@@ -1,0 +1,54 @@
+<section class="dd-live-filter" fxLayout="row" fxLayoutAlign="space-between center">
+    <div fxFlex="50%">
+        <mat-form-field class="dd-search-field">
+            <input matInput placeholder="Search Logs"  [(ngModel)]="filter.search">
+          </mat-form-field>
+
+    </div>
+    <div fxFlex="50%" class="dd-filter-check-box-group">
+        <mat-checkbox color="primary" [(ngModel)]="filter.info">Access Logs</mat-checkbox>
+        <mat-checkbox color="primary" [(ngModel)]="filter.error">Error Logs</mat-checkbox> 
+    </div>
+</section>
+<mat-tab-group color="primary">
+  <mat-tab label="RethinkDB Logs">
+      <mat-list>
+          <mat-list-item *ngFor="let log of logs.rethinkdb">
+            <h4 mat-line>
+              <b>Name:</b> {{log.name}}</h4>
+            <h4 mat-line>
+              <b>Date:</b>
+              <i>{{log.time | date:'short' }}</i>
+              <b>|</b>
+              <b>Host:</b>
+              <i>{{log.publicHostname}}</i>
+            </h4>
+            <p mat-line>
+              <b>Message:</b>
+              <i [ngClass]="{'error': log.level==50}">{{log.msg}}</i>
+            </p>
+          </mat-list-item>
+      </mat-list>
+   
+    
+  </mat-tab>
+  <mat-tab label="CrateDB Logs">
+      <mat-list>
+        <mat-list-item *ngFor="let log of logs.cratedb">
+          <h4 mat-line>
+            <b>Name:</b> {{log.name}}</h4>
+          <h4 mat-line>
+            <b>Date:</b>
+            <i>{{log.time | date:'short' }}</i>
+            <b>|</b>
+            <b>Host:</b>
+            <i>{{log.publicHostname}}</i>
+          </h4>
+          <p mat-line>
+            <b>Message:</b>
+            <i [ngClass]="{'error': log.level==50}">{{log.msg}}</i>
+          </p>
+        </mat-list-item>
+      </mat-list>
+  </mat-tab>
+</mat-tab-group>

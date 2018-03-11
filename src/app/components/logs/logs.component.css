@@ -1,43 +1,4 @@
-.dd-logs-container {
-  border: 1px solid;
-  min-height: 720px;
-}
-
-.dd-logs-sidenav-content {
-  height: 100%;
-}
-
-.dd-logs-sidenav {
-  width: 200px;
-  color: #FFFFFF;
-  background: #DDDDDD;
-}
-
-.dd-title {
-  height: 64px;
-  background-color: #3f51b5;
-  padding: 20px;
-  font-size: 16px;
-}
-
-.dd-logs {
-  padding: 0px 20px;
-}
-
-.dd-button {
-  width: 100px;
-  text-align: center;
-  background-color: #FFFFFF;
-  color : #3f51b5;
-}
-
-.dd-search-field {
-  width: 100%;
-  height: 40px;
-  padding: 0px 10px;
-}
- 
-mat-list-item {
+ mat-list-item {
   margin: 10px
 }
 
@@ -79,7 +40,7 @@ mat-list-item:nth-child(odd) {
   
 }
 
-.mat-form-field {
+mat-toolbar-row .mat-form-field {
   margin-top: 20px !important;
 }
 

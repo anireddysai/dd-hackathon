@@ -1,2 +1,19 @@
-<router-outlet></router-outlet>
+<mat-drawer-container class="dd-logs-container" autosize color="primary">
+    <mat-drawer #drawer class="dd-logs-sidenav" mode="side" opened="true">
+      <section class="dd-title">
+          <span>Hackathon Logs</span>
+      </section>
+      <section class="dd-logs">
+          <ul>
+              <li>
+                  <a [routerLink]="['/live/logs']">Live Logs</a>
+              </li>
+              <li>
+                    <a [routerLink]="['/history/logs']">Logs History</a>
+                </li>
+          </ul>
+      </section>
+    </mat-drawer>
+        <router-outlet></router-outlet>
+</mat-drawer-container>
 
