@@ -23,11 +23,6 @@ export class LiveComponent implements OnInit {
   constructor(
     private logsService: LogsService
   ) {
-    this.logsService.connect()
-    this.logsService.onNewMessage().subscribe(res=> {
-      this.updateLiveData(res);
-    })
-
    }
 
    updateLiveData(log) {
@@ -38,6 +33,11 @@ export class LiveComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.logsService.connect()
+    this.logsService.onNewMessage().subscribe(res=> {
+      this.updateLiveData(res);
+    })
+
   }
 
   ngOnDestroy() {
