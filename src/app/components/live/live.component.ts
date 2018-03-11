@@ -33,7 +33,7 @@ export class LiveComponent implements OnInit {
    updateLiveData(log) {
     console.log(log);  
     if(log.db == "rethinkdb") {
-      this.logs.rethinkdb = this.logs.rethinkdb.concat(log.log);
+      this.logs.rethinkdb = this.logs.rethinkdb.concat(log.log.new_val);
     }
   }
 
