@@ -13,7 +13,6 @@ export class FilterPipe implements PipeTransform {
         return (log.level == "30" || log.level == "50");
       }
       else if(args.info === true) {
-        console.log("came in errro");
         return log.level == "30";
       }
       else if(args.error === true) {
@@ -23,7 +22,7 @@ export class FilterPipe implements PipeTransform {
 
     if(args.search != null) {
       logs = logs.filter(log => {
-        return (log.name+log.msg+log.time+log.hostname+log.publicHostname).search(args.search) >= 0;
+        return (log.name+log.msg+log.time+log.hostname+log.publicHostname).toLowerCase().search(args.search) >= 0;
       })  
     }
 

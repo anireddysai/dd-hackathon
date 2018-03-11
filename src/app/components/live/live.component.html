@@ -13,7 +13,7 @@
 <mat-tab-group color="primary">
   <mat-tab label="RethinkDB Logs">
       <mat-list>
-          <mat-list-item *ngFor="let log of logs.rethinkdb">
+          <mat-list-item *ngFor="let log of logs.rethinkdb | filter : filter">
             <h4 mat-line>
               <b>Name:</b> {{log.name}}</h4>
             <h4 mat-line>

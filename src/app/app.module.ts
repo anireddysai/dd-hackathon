@@ -44,7 +44,8 @@ const routes: Routes = [
     OwlDateTimeModule,
     OwlNativeDateTimeModule,
     RouterModule.forRoot(
-      routes
+      routes,
+      {useHash: true}
     ),
     HttpClientModule,
     FlexLayoutModule,

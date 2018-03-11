@@ -12,7 +12,7 @@
                       <input matInput placeholder="Max Date" [(ngModel)]="maxdate" [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2" >
                       <owl-date-time #dt2></owl-date-time>
                     </mat-form-field>
-                    <md-button class="md-raised md-accent dd-button">Go</md-button>
+                    <md-button (click)="getLogsBetweenDateRange()" class="md-raised md-accent dd-button">Go</md-button>
             </mat-toolbar-row>
       </mat-toolbar>
       <section fxLayout="row" fxLayoutAlign="space-between center">

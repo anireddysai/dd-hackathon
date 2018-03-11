@@ -5,6 +5,9 @@ import * as moment from 'moment';
 import { FormControl, FormBuilder } from '@angular/forms';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 
+import { LogParamsConfig  } from '../../interfaces/log-params';
+import { Logs } from '../../interfaces/logs';
+
 @Component({
   selector: 'app-logs',
   templateUrl: './logs.component.html',
@@ -13,43 +16,42 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 export class LogsComponent implements OnInit {
   
   currentActivetab = 0;
-  config:LogParamsConfig = {
-    rethinkdb: {
-      skip :0 ,
+
+  logs:Logs = {
+    rethinkdb: [],
+    cratedb: []
+  };
+  config: LogParamsConfig = {
+    rethinkdb : {
+      skip : 0,
       limit : 100
     },
     cratedb : {
       skip: 0,
       limit: 100
     },
-    increment : 100 
+    increment : 100
   };
 
-  logs:Logs = {
-    rethinkdb: [],
-    cratedb: []
-  };
 
   filter = {
     info:true,
     error:true,
     search: null
   };
+
   mindate = new Date();
   maxdate = new Date();
 
-  settings = {
-    timePicker: true,
-    format: 'dd-MMM-yyyy hh:mm a',
-}
   constructor(
     private http: RestService,
-    private logsService: LogsService
-  ) {
+    private logsService: LogsService) {
+      this.mindate = moment().subtract('days',1).toDate();
 
    }
 
   ngOnInit() {
+
     let params = {
       min:moment(this.mindate).toISOString(),
       max:moment(this.maxdate).toISOString(),
@@ -59,7 +61,17 @@ export class LogsComponent implements OnInit {
 
    this.getRethinkDBLogs(params);
    this.getCrateDBLogs(params);
+  }
 
+  getLogsBetweenDateRange() {
+      this.config.rethinkdb.limit = this.config.increment;
+      this.config.rethinkdb.skip = 0;
+      this.config.cratedb.limit = this.config.increment;
+      this.config.cratedb.skip = 0;
+      this.logs.rethinkdb = [];
+      this.logs.cratedb = [];
+
+      this.ngOnInit();
 
   }
 
@@ -111,6 +123,7 @@ export class LogsComponent implements OnInit {
 
     this.http.execute(this.http.config.rethinkdb.logs,params,{}).subscribe(
       data => {
+        console.log(data);
         this.logs.rethinkdb  = this.logs.rethinkdb.concat(data);
       },
       error => {
@@ -138,22 +151,4 @@ export class LogsComponent implements OnInit {
 
   }
 
-}
-
-
-export interface Logs {
-  rethinkdb : Array<any>;
-  cratedb: Array<any>
-}
-
-export interface LogParamsConfig {
-  rethinkdb : {
-    skip : number,
-    limit: number
-  }
-  cratedb: {
-    skip: number,
-    limit: number
-  }
-  increment: number
 }

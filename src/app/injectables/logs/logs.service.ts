@@ -11,17 +11,24 @@ export class LogsService {
 
 	private socket: SocketIOClient.Socket;
 
-  constructor() {
-    this.socket = io('http://localhost:8080',{
+  constructor() {		
+  }
+
+  connect() {
+    this.socket = io('http://ideal-cardinal.hackathon.venom360.com',{path:'/api/socket.io',
 			transports: ['websocket', 'xhr-polling']
 		});
-		
+  }
+
+  close() {
+    this.socket.disconnect();
+
   }
 
   // EMITTER
-  sendMessage(msg: string) {
-    //this.socket.emit('sendMessage', { message: msg });
-	}
+  // sendMessage(msg: string) {
+  //   this.socket.emit('ping', { message: msg });
+	// }
 	
 
   // HANDLER

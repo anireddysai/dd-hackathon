@@ -1,12 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
-  HttpClient,
-  HttpRequest,
-  HttpResponse,
-  HttpHandler,
-  HttpEvent,
-  HttpErrorResponse,
-  HttpInterceptor
+  HttpClient
 } from '@angular/common/http'
 import { Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
@@ -22,21 +16,22 @@ export class RestService {
   
   API_ENDPOINT = "http://ideal-cardinal.hackathon.venom360.com/api/";
  // API_ENDPOINT = "http://localhost:8081/"
-
+//2018-03-10T09:00:00.000Z , 2018-03-10T10:00:00.000Z
   config: any = {};
 
   constructor( public http : HttpClient) {
 
+
    this.config = {
       rethinkdb: {
         logs: {
-          url: "logs/rethinkdb?min=2018-03-10T09:00:00.000Z&max=2018-03-10T10:00:00.000Z&limit={limit}&skip={skip}",
+          url: "logs/rethinkdb?min={min}&max={max}&limit={limit}&skip={skip}",
           method: "GET"
         }
       },
       cratedb: {
         logs: {
-          url: "logs/cratedb?min=2018-03-10T00:00:00.000Z&max=2018-03-10T09:59:59.999Z&limit={limit}&skip={skip}",
+          url: "logs/cratedb?min={min}&max={max}&limit={limit}&skip={skip}",
           method: "GET"
         }
       }
@@ -46,17 +41,15 @@ export class RestService {
 
   get(url: string, params: any):any {
     console.log(params);
+    console.log(url);
     return this.http.get(url);
   }
   
-  execute (api,params,body) {
+  execute (api,params,body):Observable<any> {
     try {
         let url = this.format(api.url,params);
         api.body = body;
-        url = this.API_ENDPOINT + url;
-        console.log(url);
-        //delete api.url;
-        
+        url = this.API_ENDPOINT + url;        
         // return this[api.method.toLowerCase()].call(url,api).map(res => {
         //   console.log(res)
         //  res =  res.json()
@@ -69,7 +62,7 @@ export class RestService {
   }
 }
 
-format(url: string, data: object) {
+format(url: string, data: object):string {
   let keys = Object.keys(data);
 
   for (var i = 0; i < keys.length; i++) {

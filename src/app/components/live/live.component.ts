@@ -23,6 +23,7 @@ export class LiveComponent implements OnInit {
   constructor(
     private logsService: LogsService
   ) {
+    this.logsService.connect()
     this.logsService.onNewMessage().subscribe(res=> {
       this.updateLiveData(res);
     })
@@ -37,6 +38,11 @@ export class LiveComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngOnDestroy() {
+    console.log("Page destroyed");
+    this.logsService.close();
   }
 
 }
